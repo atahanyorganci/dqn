@@ -97,7 +97,8 @@ def keyboard_agent(env_name, delay):
                 env.render()
                 time.sleep(delay)
             time.sleep(delay)
-        print(f'''timesteps {total_timesteps} reward {total_reward:0.2f}''')
+        print((f'timesteps {total_timesteps} '
+               f'reward {total_reward:0.2f}'))
 
     print(f'ACTIONS={ACTIONS}')
     print('Press keys 1 2 3 ... to take actions 1 2 3 ...')

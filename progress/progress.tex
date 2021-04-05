@@ -4,6 +4,7 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{textcomp}
+\usepackage{minted}
 
 \title{CS 464 -- Progress Report \\ Breakout Atari\texttrademark{} Game with Reinforcement Learning}
 \author{\IEEEauthorblockA{Group 4}\IEEEauthorblockN{Abdullah Arda Aşçı (21702748), Alim Toprak Fırat (21600587), \\ Atahan Yorgancı (21702349), Tuna Alikaşifoğlu (21702125)}}
@@ -47,8 +48,9 @@ We are planning to conduct a research about reinforcement learning, deep neural 
 \printbibliography{}
 
 \begin{appendices}
+    \onecolumn
     \section{Python Code}
-    \input{appendix.tex}
+    \inputminted[linenos]{python}{../src/main.py}
 \end{appendices}
 
 \end{document}
