@@ -8,9 +8,10 @@
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{mathtools}
 \usepackage{booktabs}
 
-\title{CS 464 -- Progress Report \\ Breakout Atari\texttrademark{} Game with Reinforcement Learning}
+\title{CS 464 Term Project Progress Report \\ Breakout Atari\texttrademark{} Game with Reinforcement Learning}
 \author{\IEEEauthorblockA{Group 4}\IEEEauthorblockN{Abdullah Arda Aşçı (21702748), Alim Toprak Fırat (21600587), \\ Atahan Yorgancı (21702349), Tuna Alikaşifoğlu (21702125)}}
 \date{\today}
 \bibliography{bibliography}
@@ -36,67 +37,74 @@ In machine learning, the process of learning is usually separated into 3 categor
 
 In reinforcement learning problems, the agents' past actions influence their current actions by changing the state of the environment. However,agents are not supplied information about which actions to take in a particular situation. The agents learn by maximizing reward (or minimizing punishment) by trying out different combinations from the set of all possible actions after observing the environment.
 
-One of the key concepts in reinforcement learning is the \emph{environment} which maintains the state, and at each time step the learning \emph{agent} observers current state of the environment \(s_t \in S\) where \(S\) is the set of all possible states, and \(s_t\) is the current state in time \(t\). Then, the agent performs an action \(a_t \in A\) depending on the state where \(a_t\) is the current action of the agent, and \(A\) is the possible action space. The environment updates its current state depending on the action of the agent, and outputs the next state \(s_{t+1}\), and \emph{reward} for the state next state \(s_{t+1}\), \(r_{t+1}\). This feedback loop continues until final condition is met, \autoref{fig:rl} demonstrates this interaction between the environment, and the agent.
+One of the key concepts in reinforcement learning is the \emph{environment} which maintains the state, and at each time step the learning \emph{agent} observers current state of the environment \(s_t \in S\) where \(S\) is the set of all possible states, and \(s_t\) is the current state in time \(t\). Then, the agent performs an action \(a_t \in A\) depending on the state where \(a_t\) is the current action of the agent, and \(A\) is the possible action space. The environment updates its current state depending on the action of the agent, and outputs the next state \(s_{t+1}\), and \emph{reward} for the state next state \(s_{t+1}\), \(r_{t+1}\). This feedback loop continues until final condition is met,~\autoref{fig:rl} demonstrates this interaction between the environment, and the agent.
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{img/rl.png}
-    \caption{RL agent, and environment \cite{sutton2018reinforcement}}
-    \label{fig:rl}
+    \caption{RL agent, and environment~\autocite{sutton2018reinforcement}}\label{fig:rl}
 \end{figure}
 
-Further, \emph{reward signal}, \(r_a(s,s')\), is the reward for transitioning from state \(s\) to \(s'\) by taking action \(a\). \emph{Value functions}, \(V_{\pi}(s)\), is the total amount of reward is expected from a particular state. While the reward signal is instantaneous, value function calculates the long-term future rewards that can be expected. \emph{Policy}, \(\pi\), is a mapping from the agent's observation of the environment to the set of actions. Informally, the policy of the agent can be considered as the ``strategy'' used by agent to receive more reward. The agent may choose to alter its policy based on how high/low reward it gains from its actions.
+Further, \emph{reward signal}, \(r_a(s,s')\), is the reward for transitioning from state \(s\) to \(s'\) by taking action \(a\). \emph{Value functions}, \(V_{\pi}(s)\), is the total amount of reward is expected from a particular state. While the reward signal is instantaneous, value function calculates the long-term future rewards that can be expected. \emph{Policy}, \(\pi \), is a mapping from the agent's observation of the environment to the set of actions. Informally, the policy of the agent can be considered as the ``strategy'' used by agent to receive more reward. The agent may choose to alter its policy based on how high/low reward it gains from its actions.
 
-RL systems can be broken into two main categories based on whether a \emph{model} of an actual environment is used that are model-based methods, and model-free methods. A \emph{model} of the environment mimics the the behavior of the environment so that the agent can plan what action will result in what kind of outcome. Conversely, in model-free methods, the agent learns by trial-and-error instead of planning out actions \cite{sutton2018reinforcement}.
+RL systems can be broken into two main categories based on whether a \emph{model} of an actual environment is used that are model-based methods, and model-free methods. A \emph{model} of the environment mimics the the behavior of the environment so that the agent can plan what action will result in what kind of outcome. Conversely, in model-free methods, the agent learns by trial-and-error instead of planning out actions~\autocite{sutton2018reinforcement}.
 
 \subsection{Q-Learning}
-Q-learning is a model-free reinforcement learning algorithm. It gives the agents the ability to learn to take optimal actions to move around Markovian state space \cite{watkins1992q}.
+Q-learning is a model-free reinforcement learning algorithm. It gives the agents the ability to learn to take optimal actions to move around Markovian state space~\autocite{watkins1992q}.
 
-Assume there exists an agent and an environment. Let \(\pi: A \times S \to [0,1]\) be the policy map which gives to probability of taking an action in a state. As previously mentioned for time step \(t\) the state of the agent is \(s_t\in S\), and it chooses the action \(a_t\in A\). Define \(\gamma\), where \(0\geq \gamma \geq 1\), to be the \emph{discount factor}. Then, the future discounted return at time $t$ is discounted sum of all future rewards.
+Assume there exists an agent and an environment. Let \(\pi: A \times S \to [0,1]\) be the policy map which gives to probability of taking an action in a state. As previously mentioned for time step \(t\) the state of the agent is \(s_t\in S\), and it chooses the action \(a_t\in A\). Define \(\gamma \), where \(0\geq \gamma \geq 1\), to be the \emph{discount factor}. Then, the future discounted return at time \(t\) is discounted sum of all future rewards.
 \begin{equation}
     R_t=\sum ^T _{t'=t} \gamma^{t'-t}r_{t'}
 \end{equation}
 where \(T\) is the time step that the game comes to an end. Also define the optimal action-value function as the maximum expected return achievable by taking any action.
 \begin{equation}
-    Q^*(s,a)=max_{\pi} \Ex [R_t|s_t =s, a_t =a, \pi]
+    Q^*(s,a)=\max_{\pi} \Ex [R_t|s_t =s, a_t =a, \pi]
 \end{equation}
 Since estimating the real value of the action-value function is too costly, a function approximator is used. \(Q(s,a;\theta) \approx Q^*(s,a)\).
 
-Neural networks are an example for a non-linear approximator, with weights \(\theta\). A Q-network is trained to minimize the loss function \(L_i\) which changes at each each epoch.
-\begin{equation}
-    L_i(\theta_i) = \Ex_{(s,a)}[(y_i-Q(s,a;\theta_i))^2]
-\end{equation}
-\begin{equation}
-    y_i=\Ex_{s'}[r+\gamma max_{a'}Q(s',a';\theta_{i-1})-Q(s,a;\theta_i)|s,a]
-\end{equation}
-where \(y_i\) is the target which depends on the weights of the neural networks, \(\theta\). Gradient of the loss function with respect to \(\theta\), we get.
-\begin{equation}
-    \nabla_{\theta_i}L_i(\theta_i)=\Ex_{(s,a),s'}[(r+\gamma max_{a'}Q(s',a';\theta_{i-1})-Q(s,a:\theta_i))\nabla_{\theta_i} Q(s,a;\theta_i)]
-\end{equation}
-The expected value's calculation can also be too costly, rather than calculating it directly, \emph{stochastic gradient descent} can be used \cite{mnih2013playing}.
+Neural networks are an example for a non-linear approximator, with weights \(\theta \). A Q-network is trained to minimize the loss function \(L_i\) which changes at each each epoch.
+\begin{align}
+    L_i(\theta_i) & = \Ex_{(s,a)}[{(y_i-Q(s,a;\theta_i))}^2]        \\
+    y_i           & = \Ex_{s'}[r+\gamma a^{*} -Q(s,a;\theta_i)|s,a] \\
+    a^{*}         & = \max_{a'}Q(s',a';\theta_{i-1})
+\end{align}
+where \(y_i\) is the target which depends on the weights of the neural networks, \(\theta \). Gradient of the loss function with respect to \(\theta \), we get
+\begin{align}
+    \nabla_{\theta_i}L_i(\theta_i) & =\Ex_{(s,a),s'}[(r+\gamma a^{*} - Q(s,a;\theta_i))Q_{\theta_i}^\prime] \\
+    \shortintertext{where}
+    Q_{\theta_i}^\prime            & = \nabla_{\theta_i} Q(s,a;\theta_i)                                    \\
+    a^{*}                          & = \max_{a'}Q(s',a';\theta_{i-1})
+\end{align}
+The expected value's calculation can also be too costly, rather than calculating it directly, \emph{stochastic gradient descent} can be used~\autocite{mnih2013playing}.
 
 \section{Work Done \& Reaming Work}
 \input{work_done.tex}
 
 \section{Work Breakdown Structure}
+The workers and their corresponding tasks are provided in~\autoref{tab:task_sharing}.
+
 \begin{table}[h]
     \centering
-    \label{tab:task_sharing}
-    \caption{Task Sharing}
+    \caption{Task Sharing}\label{tab:task_sharing}
     \begin{tabular}{rl}\toprule
-        \textbf{Worker} & \textbf{Task}\\\midrule
-        Abdullah Arda Aşçı & Setting OpenAI, and developing wrappers for \verb+gym+ environment\\
-        Atahan Yorgancı & Background research about RL, and DQN\\
-        Alim Toprak Fırat & Background research Q-Learning\\
-        Tuna Alikaşifoğlu & Developing CLI for running, and training using \verb+gym+ environment\\ \bottomrule
+        \textbf{Worker}    & \textbf{Task}                           \\\midrule
+        Abdullah Arda Aşçı & Setting OpenAI, and developing          \\
+                           & wrappers for \texttt{gym} environment   \\
+        Atahan Yorgancı    & Background research about RL            \\
+                           & and DQN                                 \\
+        Alim Toprak Fırat  & Background research about RL            \\
+                           & and Q-Learning                          \\
+        Tuna Alikaşifoğlu  & Developing CLI for running, and         \\
+                           & training using \texttt{gym} environment \\ \bottomrule
     \end{tabular}
 \end{table}
 
+\newpage
 \printbibliography{}
 
 \begin{appendices}
     \onecolumn
     \section{Python Code}
-    \inputminted[linenos, fontsize=\scriptsize]{python}{../src/main.py}
+    \inputminted[linenos]{python}{../src/main.py}
 \end{appendices}
 
 \end{document}
