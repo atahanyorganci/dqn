@@ -120,8 +120,6 @@ def keyboard_agent(env_name, delay):
               help='Name of the gym environment.')
 @click.option('--delay', default=0.02,
               help='Delay duration to set the game speed.')
-@click.option('--record',
-              help='If supplied actions of the agent will be recorded into given file')
 def observe(model, env_name, delay):
     env = make_env(env_name)
     ACTION_COUNT = env.action_space.n
