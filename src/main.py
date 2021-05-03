@@ -73,7 +73,9 @@ def keyboard_agent(env_name, fps, zoom):
               help='Delay duration to set the game speed.')
 @click.option('--zoom', default=3,
               help='Adjusts the size of the game window.')
-def observe(model, env_name, delay, zoom):
+@click.option('-c', '--continuous', is_flag=True, default=False,
+              help='Continue playing after death.')
+def observe(model, env_name, delay, zoom, continuous):
     viewer = rendering.SimpleImageViewer()
     env = make_env(env_name)
     ACTION_COUNT = env.action_space.n
@@ -102,9 +104,12 @@ def observe(model, env_name, delay, zoom):
                 obs = env.reset()
                 beginning_episode = True
                 break
-        ans = input(f'Dead! Reward: {total_rew}. Continue? [y/n] ').lower()
-        if ans == 'n':
-            break
+        if continuous:
+            print(f'Dead! Reward: {total_rew}.')
+        else:
+            ans = input(f'Dead! Reward: {total_rew}. Continue? [y/n] ').lower()
+            if ans == 'n':
+                break
     env.close()
 
 
