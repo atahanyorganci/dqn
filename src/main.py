@@ -1,6 +1,10 @@
 import gym
 import time
 import click
+from wrappers import make_env
+import torch
+from dqn import DQN
+from train import train_agent
 
 
 @click.group()
@@ -108,6 +112,53 @@ def keyboard_agent(env_name, delay):
         window_still_open = rollout(env)
         if window_still_open == False:
             break
+
+
+@cli.command()
+@click.argument('model')
+@click.option('--env_name', default='Breakout-v0',
+              help='Name of the gym environment.')
+@click.option('--delay', default=0.02,
+              help='Delay duration to set the game speed.')
+@click.option('--record',
+              help='If supplied actions of the agent will be recorded into given file')
+def observe(model, env_name, delay):
+    env = make_env(env_name)
+    ACTION_COUNT = env.action_space.n
+    dqn = torch.load(model).cpu()
+
+    while True:
+        obs = env.reset()
+        beginning_episode = True
+        total_rew = 0
+        while True:
+            if beginning_episode:
+                action = 1
+                beginning_episode = False
+            else:
+                action = dqn.act(torch.Tensor(obs.__array__()).unsqueeze(0))
+
+            obs, rew, done, info = env.step(action)
+            total_rew += rew
+            env.render()
+            time.sleep(delay)
+
+            if done:
+                obs = env.reset()
+                beginning_episode = True
+                break
+        ans = input(f'Dead! Reward: {total_rew}. Continue? [y/n] ').lower()
+        if ans == 'n':
+            break
+    env.close()
+
+
+@cli.command()
+@click.option('--env', help='Environment name.', default='BreakoutDeterministic-v4')
+@click.option('--model', help='If provided model will continue to be trained')
+@click.option('--epsilon', is_flag=True, help='Controls whether epsilon is reset')
+def train(env, model, epsilon):
+    train_agent(env, model_path=model, epsilon=True)
 
 
 if __name__ == '__main__':
