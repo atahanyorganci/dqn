@@ -1,6 +1,7 @@
 import gym
 import time
 import click
+from torch._C import device
 from wrappers import make_env
 import torch
 from dqn import DQN
@@ -79,7 +80,9 @@ def observe(model, env_name, delay, zoom, continuous):
     viewer = rendering.SimpleImageViewer()
     env = make_env(env_name)
     ACTION_COUNT = env.action_space.n
-    dqn = torch.load(model).cpu()
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = torch.device(device)
+    dqn = torch.load(model, map_location=device).cpu()
 
     while True:
         obs = env.reset()
