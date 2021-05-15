@@ -10,7 +10,7 @@ This method of learning requires no set of labeled or unlabeled data to be colle
 the learning actually starts. Instead the agent, typically a neural network,
 is used for predicting the optimal action to be taken at each step based on its observation
 and a reward is determined by the environment which is used for training the agent.
-In RL, this environment is modeled as a Markov Decision Process (MDP).
+In RL, this environment is modeled as a Markov Decision Process (MDP)~\autocite{BUSONIU20188}.
 
 \subsubsection{Markov Decision Process}
 MDP is a mathematical framework based on Markov Chains for decision making processes
@@ -70,11 +70,11 @@ The action value function, also called the Q-function, is the expected return st
 \begin{equation}
     Q_\pi(s,a) = E_\pi[G_t \;|\; s_t = s, a_t = a]
 \end{equation}
-Similar to the state-action function, we can also decompose this into a recursive function:
+Similar to the state-action function, we can also decompose this into a recursive function by redefining
 \begin{equation}
-    Q_\pi(s,a) = E_\pi[G_{t+1} \;|\; s_t = s, a_t = a]
+    G_{t} = R_{t+1} + \gamma Q_\pi(s_{t+1}, a_{t+1}),
 \end{equation}
-where \(G_{t+1} = R_{t+1} + \gamma Q_\pi(s_{t+1}, a_{t+1})\), and define the optimal action-value function as:
+and define the optimal action-value function as:
 \begin{equation}
     Q_*(s,a) = \max_\pi{Q_\pi(s,a)}
 \end{equation}
@@ -97,11 +97,69 @@ These three assumptions can be used to shows that finding the optimal policy
 \begin{equation}
     \pi_*(a | s) =
     \begin{cases}
-        1 & \text{if arg}\max_a{Q_*(s,a)} \\
+        1 & \text{if }\argmax_{a}{Q_*(s,a)} \\
         0 & \text{otherwise}
     \end{cases}
 \end{equation}
 This equation essentially means that finding the optimal policy can be done by
-following the path given by \(Q_*(s,a)\) assuming that the optimal Q function is known.
+following the path given by \(Q_*(s,a)\) assuming that the optimal Q function is known~\autocite{mnih2013playing}.
 
 \subsection{Neural Networks}
+Artificial Neural Networks (ANNs), or simply Neural Networks (NNs), are
+machine learning models that are loosely based on real life neurons and their connections.
+Although the theoretical work for these types of models were mostly developed in mid
+20\textsuperscript{th} century, the applications of them were quite limited considering
+the computational power required for the necessary calculations.
+
+\begin{figure}[h]
+    \centering{}
+    \includegraphics[width=\linewidth, height=0.3\textheight, keepaspectratio]{img/ann.png}
+    \caption{A Basic ANN Structure~\autocite{buseyarentekin}}~\label{fig:ANN}
+\end{figure}
+
+In our project, the observation provided to the RL agent compromises of screenshots of
+the game's graphics. Therefore, the NN we used is made up of mainly convolutional layers
+for image processing with smaller fully connected layers at the end for decision making.
+The entire neural network used is:
+\begin{enumerate}
+    \item Convolutional Layer: 32 filters,
+    \item ReLu Activation Layer,
+    \item Convolutional Layer: 64 filters,
+    \item ReLu Activation Layer,
+    \item Convolutional Layer: 64 filters,
+    \item ReLu Activation Layer,
+    \item Fully Connected Layer: 512 wide,
+    \item ReLu Activation Layer,
+    \item Fully Connected Layer: 4 wide
+\end{enumerate}
+
+\subsection{Deep Q Learning (DQN)}
+The standard Q learning algorithm uses the training episodes to fill up a Q table where
+each value corresponds to a specific action taken in a specific state. This method
+functions properly when the amount of state action pairs are relatively low.
+For example, the ``Cliff Walking Problem'', shown below, is simple enough that a Q table would be the feasible. In fact, the table would only have between 160 to 192 entries depending on  how the environment is defined.
+
+\begin{figure}[h]
+    \centering{}
+    \includegraphics[width=\linewidth, height=0.3\textheight, keepaspectratio]{img/cliff_walking.png}
+    \caption{Cliff Walking Problem~\autocite{Cliff_photo}}~\label{fig:CliffWalk}
+\end{figure}
+
+
+For more complicated environments, this approach quickly loses its feasibility.
+In those cases, like what we have in Breakout, a neural network is used as a
+nonlinear function approximator to replace the table. In DQN, the nn provides a
+mapping from the give state \(s\), to the Q function of all possible actions in that
+state \(Q(s,\underline{a})\).\\
+The training loop of our network has a few additional, but still standard, features.
+These are:
+\begin{enumerate}
+    \item
+          \(\epsilon \)-greedy Policy: To simulate \textit{exploration}, the action will be chosen randomly with probability \(\epsilon \),
+    \item Experience Replay Memory: To combat the unstable nature of deep reinforcement
+          learning, a circular memory with a set size will be used to reduce the correlations
+          between the sequence of observations used in every training batch.
+    \item Target Network: An additional \textit{target network} is used to increase the
+          stability of the learning.
+\end{enumerate}
+The final learning algorithm is given in~\autoref{algo:dqn} in~\autoref{app:dqn}.
