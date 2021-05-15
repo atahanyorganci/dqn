@@ -15,7 +15,7 @@ class MetricLogger:
         self.save_log = save_dir / "log.csv"
         with open(self.save_log, "w") as f:
             f.write(
-                'Episode,Step,Mean Reward,Mean Length, Mean Q Value, Time Delta, Time\n')
+                'Episode,Step,Epsilon,Mean Reward,Mean Length,Mean Loss,Mean Q Value,Time Delta,Time\n')
         self.ep_rewards_plot = save_dir / "reward_plot.jpg"
         self.ep_lengths_plot = save_dir / "length_plot.jpg"
         self.ep_avg_losses_plot = save_dir / "loss_plot.jpg"
