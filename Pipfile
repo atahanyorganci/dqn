@@ -7,6 +7,7 @@ name = "pypi"
 gym = {extras = ["atari"], version = "*"}
 ipykernel = "*"
 click = "*"
+seaborn = "*"
 
 [dev-packages]
 autopep8 = "*"
