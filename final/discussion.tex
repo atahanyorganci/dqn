@@ -1,5 +1,6 @@
 \section{Discussion}
- {
-  \color{red}
-  Interpretation and discussion of the results.
- }
+As previously mentioned we trained out agent for 100000 episodes with random restarts every 20000 episode. In random restarts epsilon value of the agent is set to its default starting value. Without random restarts after the agent is trained for certain number of episodes, the agent starts to overfit to samples, and performance of the agent in terms of received reward decreases. In this regard, performing random restarts provides the agent with novel samples, as it takes random actions.
+
+While training we observed that as agent's replay memory size increases the agent is able to avoid overfitting for more number of episodes. This phenomena can be explained by the fact that we assume every memory sample is conditionally independent from each other. In theory, it is obvious that recorded transitions are dependent on each other as they are recorded consecutively. In practical terms, if we increase the memory size, and take random samples after shuffling, probability of samples being dependent can be negligible.
+
+For increasing the agent performance, we decreased the action space by taking out the \verb+FIRE+ action. This action is only used when the agent loses a life, or at the beginning of the game. After reducing the action space, and training new agents for the new model the agent's average reward nearly doubled. This can be by the fact that \verb+FIRE+ action is ignored if the ball is not on the paddle. Trying to learn when to fire is a difficult task as this information is encoded in the number of lives displayed at the top the screen, or the ball being at the paddle.
