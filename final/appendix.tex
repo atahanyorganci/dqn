@@ -1,5 +1,5 @@
 \begin{appendices}
-    \section{Contribution}
+    \section{Contribution}\label{app:contrib}
     \begin{table}[h]
         \centering
         \caption{Task Sharing}\label{tab:task_sharing}
@@ -25,4 +25,40 @@
                                & testing with different                     \\ \bottomrule
         \end{tabular}
     \end{table}
+
+    \clearpage
+    \onecolumn
+    \section{Result Plots}\label{app:results}
+    \begin{figure}[h]
+        \centering{}
+        \begin{subfigure}{0.49\linewidth}
+            \centering{}
+            \includegraphics[width=\linewidth, height=0.3\textheight, keepaspectratio]{img/result_img/mean_reward.png}
+            \caption{Mean Reward}
+        \end{subfigure}
+        \begin{subfigure}{0.49\linewidth}
+            \centering{}
+            \includegraphics[width=\linewidth, height=0.3\textheight, keepaspectratio]{img/result_img/mean_length.png}
+            \caption{Mean Length}
+        \end{subfigure}
+        \\
+        \begin{subfigure}{0.49\linewidth}
+            \centering{}
+            \includegraphics[width=\linewidth, height=0.3\textheight, keepaspectratio]{img/result_img/mean_loss.png}
+            \caption{Mean Loss}
+        \end{subfigure}
+        \begin{subfigure}{0.49\linewidth}
+            \centering{}
+            \includegraphics[width=\linewidth, height=0.3\textheight, keepaspectratio]{img/result_img/mean_q_value.png}
+            \caption{Mean Q Value}
+        \end{subfigure}
+        \\
+        \begin{subfigure}{0.49\linewidth}
+            \centering{}
+            \includegraphics[width=\linewidth, height=0.3\textheight, keepaspectratio]{img/result_img/epsilon.png}
+            \caption{Epsilon}
+        \end{subfigure}
+
+        \caption{Change per Episode}\label{fig:results}
+    \end{figure}
 \end{appendices}
