@@ -1,5 +1,107 @@
 \section{Methods}
- {
-  \color{red}
-  Description of methods and datasets used.
- }
+As our project is to create a model with reinforcement learning, specifically DQN,
+we do not have a predefined dataset. With this in mind, our methodology can be separated
+into three parts.
+
+\subsection{Reinforcement Learning}
+Reinforcement Learning (RL) is a subset of Machine Learning (ML) where the
+aim is to teach a model, called agent, via its interactions with the surrounding environment.
+This method of learning requires no set of labeled or unlabeled data to be collected before
+the learning actually starts. Instead the agent, typically a neural network,
+is used for predicting the optimal action to be taken at each step based on its observation
+and a reward is determined by the environment which is used for training the agent.
+In RL, this environment is modeled as a Markov Decision Process (MDP).
+
+\subsubsection{Markov Decision Process}
+MDP is a mathematical framework based on Markov Chains for decision making processes
+with inherent randomness. In Markov Decision Processes, we define:
+\begin{itemize}
+    \item \(S\): State Space (finite set),
+    \item \(A\): Action Space (finite set),
+    \item \(A_s\): Set of actions available at state \(s\),
+    \item
+          \(P^a_{ss'} = P_a(s,s') = P(s_{t+1} = s' \;|\; s_t = s, a_t = a)\) is the probability of action \(a\) in state \(s\) leading to state \(s'\),
+    \item \(R_a(s, s')\): Reward received after transitioning from \(s\) to \(s'\).
+\end{itemize}
+
+\subsubsection{Markov Property}
+For RL agents to work with MDPs we need the environment to be fully observable,
+meaning that state \(s\) must capture all the characteristics of the environment.
+In more technical terms, any state is \(S\) must satisfy the Markov Property which is defined as.
+\begin{equation}
+    P[s_{t+1} \;|\; s_t] = P[s_{t+1} \;|\; s_1, \ldots, s_t]
+\end{equation}
+This property essentially enables the environment to be memoryless which is required for
+Markov Chains and more importantly its extension MDPs.
+
+\subsubsection{Policy}
+The objective in an MDP is to optimize the \textit{policy} of the decision making algorithm.
+Here, we define the function \(\pi(s)\) that outputs the action chosen by the decision maker
+based on the current state \(s\). This optimization mainly done by maximizing the cumulative
+reward function. This function can be expressed as:
+\begin{equation}
+    G_t = \sum^{\infty}_{t=0}{\gamma^t R_a(s_t, s_{t+1})},\;
+\end{equation}
+where \(0\leq \gamma \leq 1\) is the discount factor. The equation above introduces the concept of \textit{discount factors}. This parameter is quite important as it is one of the hyperparameters of RL training loops. It is useful for avoiding cyclic behavior and infinite returns, and representing an exponentially increasing uncertainty for the future time steps.
+
+Moreover, the policy that maximizes the function given above is regarded as as the
+\textit{optimal policy} and denoted as \(\pi^*(s)\). It should be noted that this optimal policy is not necessarily unique.
+
+\subsubsection{State-Value Function}
+The state-value function, or just value function, is denoted by \(V_\pi(s)\). It is the expected return stating from state \(s\) and following policy \(\pi \) of an MDP\@. In most applications, it is used to evaluate how good being in a state is. It is mathematically expressed as:
+\begin{equation}
+    V_\pi(s) = E_\pi[G_t \;|\; s_t = s]
+\end{equation}
+As can be seen in the equation above, calculating the cumulative reward function is required
+to find the value function of a state. This can be decomposed into a recursive function
+as the current reward plus the discounted value function of the successor by utilizing
+the Bellman Equation.
+\begin{equation}
+    V_\pi(s) = E_\pi[R_{t+1} + \gamma V_\pi(s_{t+1}) \;|\; s_t = s]
+\end{equation}
+With this done, we now define the state-value function that is produced by the optimal
+policy \(\pi^*\) as the \textit{optimal state-value function}. In mathematical terms:
+\begin{equation}
+    V_*(s) = \max_\pi{V_\pi(s)}
+\end{equation}
+
+\subsubsection{Action Value Function}
+The action value function, also called the Q-function, is the expected return starting from state \(s\), taking action \(a\), and then following policy \(\pi \). This is expressed as:
+\begin{equation}
+    Q_\pi(s,a) = E_\pi[G_t \;|\; s_t = s, a_t = a]
+\end{equation}
+Similar to the state-action function, we can also decompose this into a recursive function:
+\begin{equation}
+    Q_\pi(s,a) = E_\pi[G_{t+1} \;|\; s_t = s, a_t = a]
+\end{equation}
+where \(G_{t+1} = R_{t+1} + \gamma Q_\pi(s_{t+1}, a_{t+1})\), and define the optimal action-value function as:
+\begin{equation}
+    Q_*(s,a) = \max_\pi{Q_\pi(s,a)}
+\end{equation}
+
+\subsubsection{Finding the Optimal Policy}
+In all MDPs, three conditions are satisfied:
+\begin{itemize}
+    \item An optimal policy \(\pi^*\) exists (not necessarily unique),
+    \item Optimal policy achieves the optimal state-value function
+          \begin{equation}
+              V_{\pi^*}(s) = V_*(s)
+          \end{equation}
+    \item Optimal policy achieves the optimal action-value function
+          \begin{equation}
+              Q_{\pi^*}(s,a) = Q_*(s, a)
+          \end{equation}
+\end{itemize}
+These three assumptions can be used to shows that finding the optimal policy
+\(\pi^*\) to solve the MDP can be done by maximizing over \(Q_*(s,a)\) with:
+\begin{equation}
+    \pi_*(a | s) =
+    \begin{cases}
+        1 & \text{if arg}\max_a{Q_*(s,a)} \\
+        0 & \text{otherwise}
+    \end{cases}
+\end{equation}
+This equation essentially means that finding the optimal policy can be done by
+following the path given by \(Q_*(s,a)\) assuming that the optimal Q function is known.
+
+\subsection{Neural Networks}
